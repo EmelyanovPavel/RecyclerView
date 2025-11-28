@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/neptuneImageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/neptune"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/marsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="neptune"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/neptuneImageView"
+        app:layout_constraintStart_toEndOf="@+id/neptuneImageView"
+        app:layout_constraintTop_toTopOf="@+id/neptuneImageView"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/moveItemUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:tint="@color/design_default_color_error"
+        app:layout_constraintBottom_toBottomOf="@+id/neptuneTextView"
+        app:layout_constraintEnd_toStartOf="@+id/moveItemDown"
+        app:layout_constraintStart_toEndOf="@+id/neptuneTextView"
+        app:layout_constraintTop_toTopOf="@+id/neptuneTextView"
+        app:srcCompat="@android:drawable/arrow_up_float"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/moveItemDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:tint="@color/design_default_color_error"
+        app:layout_constraintBottom_toBottomOf="@+id/neptuneTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/moveItemUp"
+        app:layout_constraintTop_toTopOf="@+id/neptuneTextView"
+        app:srcCompat="@android:drawable/arrow_down_float"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/neptuneDescriptionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Neptune is the eighth and furthest planet from the Sun in the Solar system."
+        android:textColor="#000"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/neptuneImageView"
+        tools:visibility="visible"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
