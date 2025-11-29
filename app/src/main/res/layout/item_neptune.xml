@@ -15,10 +15,10 @@
         />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/marsTextView"
+        android:id="@+id/neptuneTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="neptune"
+        android:text="Neptune"
         android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/neptuneImageView"

@@ -1,5 +1,6 @@
 package com.example.recyclerview
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -52,7 +53,7 @@ class ListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class HeaderViewHolder(private val binding: ItemHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ListItem.Header) {
-            binding.tvHeader.text = item.title
+            binding.header.text = item.title
         }
     }
 
@@ -68,6 +69,7 @@ class ListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             return oldItem == newItem
         }
 
+        @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
             return oldItem.toString() == newItem.toString()
         }

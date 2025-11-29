@@ -1,11 +1,13 @@
 package com.example.recyclerview
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -18,33 +20,38 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerview.databinding.ActivityMainBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var fab: FloatingActionButton
+    private val items = mutableListOf<Item>()
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var adapter: RecyclerActivityAdapter
+    private lateinit var adapter2: ItemAdapter
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         _binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
-        setContentView(view)
+        setContentView(R.layout.activity_main)
+        
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
         val data = arrayListOf(
-            Pair(Data("venus"), false),
-            Pair(Data("venus"), false),
-            Pair(Data("neptune", ""), false),
-            Pair(Data("venus"), false),
-            Pair(Data("venus"), false),
-            Pair(Data("venus"), false),
-            Pair(Data("neptune", null), false)
+            Pair(Data("Venus"), false),
+            Pair(Data("Venus"), false),
+            Pair(Data("Neptune", ""), false),
+            Pair(Data("Venus"), false),
+            Pair(Data("Venus"), false),
+            Pair(Data("Venus"), false),
+            Pair(Data("Neptune", null), false)
         )
 
         data.add(0, Pair(Data("Header"), false))
@@ -70,11 +77,93 @@ class MainActivity : AppCompatActivity() {
             .attachToRecyclerView(binding.recyclerView)
 
 
-        binding.recyclerActivityFAB.setOnClickListener {
+        binding.fab.setOnClickListener {
             adapter.appendItem()
             binding.recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
         }
 
+        recyclerView = findViewById(R.id.recyclerView)
+        fab = findViewById(R.id.fab)
+
+        // Настройка RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter2 = ItemAdapter(
+            items,
+            { item -> showItemDetails(item) },
+            { position -> removeItem(position) }
+        )
+        recyclerView.adapter = adapter
+
+        // FAB: добавление нового элемента
+        fab.setOnClickListener {
+            showAddItemDialog()
+        }
+        // Добавляем начальные данные для демонстрации
+        loadSampleData()
+
+    }
+
+    //adding new element
+    private fun showAddItemDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("The new note")
+
+        val view = layoutInflater.inflate(R.layout.dialog_add_item, null)
+        val etTitle: EditText = view.findViewById(R.id.etTitle)
+        val etDescription: EditText = view.findViewById(R.id.etDescription)
+
+        builder.setView(view)
+        builder.setPositiveButton("Add") { _, _ ->
+            val title = etTitle.text.toString()
+            val description = etDescription.text.toString()
+            if (title.isNotEmpty()) {
+                val newItem = Item(title = title, description = description)
+                items.add(newItem)
+                adapter.notifyItemInserted(items.size - 1)
+                recyclerView.smoothScrollToPosition(items.size - 1)
+            }
+        }
+        builder.setNegativeButton("Cansel", null)
+        builder.show()
+    }
+
+    //removing element (long press)
+    private fun removeItem(position: Int): Boolean {
+        items.removeAt(position)
+        adapter.notifyItemRemoved(position)
+        Toast.makeText(this, "Element removed", Toast.LENGTH_SHORT).show()
+        return true
+    }
+
+    // 3. Editing element (click)
+    private fun showItemDetails(item: Item) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Edit note")
+
+        val view = layoutInflater.inflate(R.layout.dialog_add_item, null)
+        val etTitle: EditText = view.findViewById(R.id.etTitle)
+        val etDescription: EditText = view.findViewById(R.id.etDescription)
+
+        etTitle.setText(item.title)
+        etDescription.setText(item.description)
+
+        builder.setView(view)
+        builder.setPositiveButton("Save") { _, _ ->
+            item.title = etTitle.text.toString()
+            item.description = etDescription.text.toString()
+            adapter.notifyDataSetChanged()
+            Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
+        }
+        builder.setNegativeButton("Cansel", null)
+        builder.show()
+    }
+
+    private fun loadSampleData() {
+        items.addAll(listOf(
+            Item(title = "Task 1", description = "description of the first task"),
+            Item(title = "Task 2", description = "description of the second task")
+        ))
+        adapter.notifyDataSetChanged()
     }
 }
 
@@ -88,11 +177,11 @@ class RecyclerActivityAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            TYPE_EARTH -> VenusViewHolder(
+            TYPE_VENUS -> VenusViewHolder(
                 inflater.inflate(R.layout.item_venus, parent, false) as View
             )
 
-            TYPE_MARS ->
+            TYPE_NEPTUNE ->
                 NeptuneViewHolder(
                     inflater.inflate(R.layout.item_neptune, parent, false) as View
                 )
@@ -106,12 +195,12 @@ class RecyclerActivityAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            TYPE_EARTH -> {
+            TYPE_VENUS -> {
                 holder as VenusViewHolder
                 holder.bind(data[position])
             }
 
-            TYPE_MARS -> {
+            TYPE_NEPTUNE -> {
                 holder as NeptuneViewHolder
                 holder.bind(data[position])
             }
@@ -130,8 +219,8 @@ class RecyclerActivityAdapter(
     override fun getItemViewType(position: Int): Int {
         return when {
             position == 0 -> TYPE_HEADER
-            data[position].first.someDescription.isNullOrBlank() -> TYPE_MARS
-            else -> TYPE_EARTH
+            data[position].first.someDescription.isNullOrBlank() -> TYPE_NEPTUNE
+            else -> TYPE_VENUS
         }
     }
 
@@ -142,7 +231,7 @@ class RecyclerActivityAdapter(
         notifyItemInserted(itemCount - 1)
     }
 
-    private fun generateItem() = Pair(Data("Mars", ""), false)
+    private fun generateItem() = Pair(Data("Neptune", ""), false)
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         data.removeAt(fromPosition).apply {
@@ -155,7 +244,6 @@ class RecyclerActivityAdapter(
         data.removeAt(position)
         notifyItemRemoved(position)
     }
-
 
     inner class VenusViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -177,7 +265,7 @@ class RecyclerActivityAdapter(
                 .setOnClickListener { onListItemClickListener.onItemClick(dataItem.first) }
             itemView.findViewById<ImageView>(R.id.moveItemDown).setOnClickListener { moveDown() }
             itemView.findViewById<ImageView>(R.id.moveItemUp).setOnClickListener { moveUp() }
-            itemView.findViewById<TextView>(R.id.marsTextView)
+            itemView.findViewById<TextView>(R.id.neptuneTextView)
                 .setOnClickListener { toggleText() }
         }
 
@@ -235,8 +323,8 @@ class RecyclerActivityAdapter(
     }
 
     companion object {
-        private const val TYPE_EARTH = 0
-        private const val TYPE_MARS = 1
+        private const val TYPE_VENUS = 0
+        private const val TYPE_NEPTUNE = 1
         private const val TYPE_HEADER = 2
     }
 }
