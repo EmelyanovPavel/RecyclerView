@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="main" type="id">main</item>
+    <item name="etTitle" type="id">Edited title</item>
+    <item name="etDescription" type="id">Edited description</item>
+    <item name="fab" type="id">FAB</item>
 </resources>
