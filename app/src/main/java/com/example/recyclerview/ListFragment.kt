@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.example.recyclerview.databinding.FragmentListBinding
-import com.google.android.filament.View
 
 class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
@@ -18,7 +17,7 @@ class ListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupFab()
