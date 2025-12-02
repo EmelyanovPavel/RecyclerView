@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                 recyclerView.smoothScrollToPosition(items.size - 1)
             }
         }
-        builder.setNegativeButton("Cansel", null)
+        builder.setNegativeButton("Canсel", null)
         builder.show()
     }
 
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
         }
-        builder.setNegativeButton("Cansel", null)
+        builder.setNegativeButton("Canсel", null)
         builder.show()
     }
 
