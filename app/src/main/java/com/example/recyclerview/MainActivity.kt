@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -30,6 +32,10 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
     private lateinit var adapter: RecyclerActivityAdapter
     private lateinit var adapter2: ItemAdapter
+//    Homework #16
+    private lateinit var adapter3: MVVM
+    private val viewModel: MainViewModel by viewModels()
+    private val dataList = mutableListOf<Pair<Data, Boolean>>()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +106,43 @@ class MainActivity : AppCompatActivity() {
         }
         // Добавляем начальные данные для демонстрации
         loadSampleData()
+        //Homework #16
+        setupRecyclerView()
+        setupFab()
+        observeViewModel()
+    }
 
+    private fun setupRecyclerView() {
+        adapter3 = MVVM(viewModel, dataList) //Homework #16
+
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            addItemDecoration(DividerItemDecoration(this@MainActivity, LinearLayoutManager.VERTICAL))
+            adapter = this@MainActivity.adapter
+
+        }
+
+        ItemTouchHelper(ItemTouchHelperCallback(adapter)).attachToRecyclerView(binding.recyclerView)
+    }
+
+    private fun setupFab() {
+        binding.fab.setOnClickListener {
+            viewModel.onFabClick()
+        }
+    }
+
+    private fun observeViewModel() {
+        // Наблюдаем за изменениями данных
+        viewModel.dataList.observe(this) { data ->
+            // Передаем данные в adapter
+            adapter3.updateData(data) //Homework #16
+            Log.d("MainActivity", "Данные обновлены: ${data.size} элементов")
+        }
+
+        // Наблюдаем за сообщениями Toast
+        viewModel.toastMessage.observe(this) { message ->
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
     }
 
     //adding new element
@@ -123,7 +165,7 @@ class MainActivity : AppCompatActivity() {
                 recyclerView.smoothScrollToPosition(items.size - 1)
             }
         }
-        builder.setNegativeButton("Cansel", null)
+        builder.setNegativeButton("Canсel", null)
         builder.show()
     }
 
